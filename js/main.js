@@ -33,46 +33,52 @@ $(function () {
 
     // Toggle fullscreen button:
     $('#toggle-fullscreen').button().click(function () {
-        var button = $(this),
-            root = document.documentElement;
-        if (!button.hasClass('active')) {
-            $('#modal-gallery').addClass('modal-fullscreen');
-            if (root.webkitRequestFullScreen) {
-                root.webkitRequestFullScreen(
-                    window.Element.ALLOW_KEYBOARD_INPUT
-                );
-            } else if (root.mozRequestFullScreen) {
-                root.mozRequestFullScreen();
-            }
-        } else {
-            $('#modal-gallery').removeClass('modal-fullscreen');
-            (document.webkitCancelFullScreen ||
-                document.mozCancelFullScreen ||
-                $.noop).apply(document);
-        }
+        var button = $(this);
+        window.open(button.attr('ref'));
     });
 
-    // Load images via flickr for demonstration purposes:
-    $.ajax({
-        url: 'http://api.flickr.com/services/rest/',
-        data: {
-            format: 'json',
-            method: 'flickr.interestingness.getList',
-            api_key: '7617adae70159d09ba78cfec73c13be3'
-        },
-	    dataType: 'jsonp',
-        jsonp: 'jsoncallback'
-    }).done(function (data) {
-        var gallery = $('#gallery'),
-            url;
-        $.each(data.photos.photo, function (index, photo) {
-            url = 'http://farm' + photo.farm + '.static.flickr.com/' +
-                photo.server + '/' + photo.id + '_' + photo.secret;
-            $('<a data-gallery="gallery"/>')
-                .append($('<img>').prop('src', url + '_s.jpg'))
-                .prop('href', url + '_b.jpg')
-                .prop('title', photo.title)
-                .appendTo(gallery);
+    $(function () {
+        // Load images via flickr for demonstration purposes:
+        var gallery = $('#gallery');
+        var url_prefix = "/data?timestart=-10min&timestop=now&application=%5CQsap_server_metrics_0.11%5CE&report=state&reportItem=pernode&legend=metric&brief=1&nonzero=1&timezone=Asia%2FShanghai";
+        var clusters = [
+            {
+                cluster: 'sp',
+                server: '110.75.28.193:8000',
+                metrics: ['avarage_latency', 'in_qps', 'searcher_res', 'out_err_qps']
+            }, 
+            {
+                cluster: 'sp501',
+                server: '110.75.6.7:9999',
+                metrics: ['avarage_latency', 'in_qps', 'searcher_res', 'out_err_qps']
+            }, 
+            {
+                cluster: 'sp801',
+                server: '110.75.28.193:8000',
+                metrics: ['avarage_latency', 'in_qps', 'searcher_res', 'out_err_qps']
+            }
+        ];
+        //gallery.empty();
+        clusters.forEach(function (c) {
+            var url = 'http://' + c.server + url_prefix
+                + '&cluster=' + c.cluster + '_.*';
+            var html_url = url + '&view=html&width=750&height=200&multigraph=metric';
+            gallery.append('<a id="toggle-fullscreen" class="btn btn-large btn-primary" data-toggle="button" href="' + html_url + '" target="_blank">' + c.cluster + '</a>');
+            c.metrics.forEach(function (metric) {
+                var img_url = url + '&view=png' + '&metric=' + metric;
+                var img_src = img_url + '&width=150&height=75';
+                var img_id = 'gallery-' + c.cluster + '-' + metric;
+                $('<a data-gallery="gallery"/>')
+                    .append($('<img>').prop('src', img_src)
+                            .prop('id', img_id))
+                    .prop('href', img_url + '&width=750&height=200')
+                    .prop('title', c.cluster + ':' + metric)
+                    .appendTo(gallery);
+                setInterval(function() {
+                    $('#'+img_id).attr('src', img_src);
+                }, 60000);
+            });
+            gallery.append('<br>');
         });
     });
 });
