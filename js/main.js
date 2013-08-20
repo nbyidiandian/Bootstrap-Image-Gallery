@@ -40,38 +40,47 @@ $(function () {
     $(function () {
         // Load images via flickr for demonstration purposes:
         var gallery = $('#gallery');
-        var url_prefix = "/data?timestart=-10min&timestop=now&application=%5CQsap_server_metrics_0.11%5CE&report=state&reportItem=pernode&legend=metric&brief=1&nonzero=1&timezone=Asia%2FShanghai";
+        var url_prefix = "/data?timestop=now&application=%5CQsap_server_metrics_0.11%5CE&report=state&reportItem=pernode&legend=metric&brief=1&nonzero=1&timezone=Asia%2FShanghai";
         var clusters = [
             {
-                cluster: 'sp',
+                cluster: 'sp_.*',
+                name: 'SP',
                 server: '110.75.28.193:8000',
                 metrics: ['avarage_latency', 'in_qps', 'searcher_res', 'out_err_qps']
             }, 
             {
-                cluster: 'sp501',
+                cluster: 'sp501_.*',
+                name: 'SP501',
                 server: '110.75.6.7:9999',
                 metrics: ['avarage_latency', 'in_qps', 'searcher_res', 'out_err_qps']
             }, 
             {
-                cluster: 'sp801',
+                cluster: 'sp801_.*',
+                name:'SP801',
                 server: '110.75.28.193:8000',
                 metrics: ['avarage_latency', 'in_qps', 'searcher_res', 'out_err_qps']
-            }
+            },
+            {
+                cluster: 'sp_test_s004029',
+                name:'SP_PRE',
+                server: '110.75.18.7:8000',
+                metrics: ['avarage_latency', 'in_qps', 'searcher_res', 'out_err_qps']
+            } 
         ];
         //gallery.empty();
         clusters.forEach(function (c) {
             var url = 'http://' + c.server + url_prefix
-                + '&cluster=' + c.cluster + '_.*';
-            var html_url = url + '&view=html&width=750&height=200&multigraph=metric';
-            gallery.append('<a id="toggle-fullscreen" class="btn btn-large btn-primary" data-toggle="button" href="' + html_url + '" target="_blank">' + c.cluster + '</a>');
+                + '&cluster=' + c.cluster;
+            var html_url = url + '&timestart=-10min&view=html&width=750&height=200&multigraph=metric';
+            gallery.append('<a id="toggle-fullscreen" class="btn btn-large btn-primary" data-toggle="button" href="' + html_url + '" target="_blank">' + c.name + '</a>');
             c.metrics.forEach(function (metric) {
                 var img_url = url + '&view=png' + '&metric=' + metric;
-                var img_src = img_url + '&width=150&height=75';
+                var img_src = img_url + '&timestart=-10min&width=150&height=75';
                 var img_id = 'gallery-' + c.cluster + '-' + metric;
                 $('<a data-gallery="gallery"/>')
                     .append($('<img>').prop('src', img_src)
                             .prop('id', img_id))
-                    .prop('href', img_url + '&width=750&height=200')
+                    .prop('href', img_url + '&timestart=-2h&width=750&height=200')
                     .prop('title', c.cluster + ':' + metric)
                     .appendTo(gallery);
                 setInterval(function() {
