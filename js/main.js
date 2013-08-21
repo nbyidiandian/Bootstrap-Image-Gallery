@@ -40,7 +40,6 @@ $(function () {
     $(function () {
         // Load images via flickr for demonstration purposes:
         var gallery = $('#gallery');
-        var url_prefix = "/data?timestop=now&application=%5CQsap_server_metrics_0.11%5CE&report=state&reportItem=pernode&legend=metric&brief=1&nonzero=1&timezone=Asia%2FShanghai";
         var clusters = [
             {
                 cluster: 'sp_.*',
@@ -67,26 +66,41 @@ $(function () {
                 metrics: ['avarage_latency', 'in_qps', 'searcher_res', 'out_err_qps']
             } 
         ];
-        //gallery.empty();
         clusters.forEach(function (c) {
-            var url = 'http://' + c.server + url_prefix
-                + '&cluster=' + c.cluster;
-            var html_url = url + '&timestart=-10min&view=html&width=750&height=200&multigraph=metric';
-            gallery.append('<a id="toggle-fullscreen" class="btn btn-large btn-primary" data-toggle="button" href="' + html_url + '" target="_blank">' + c.name + '</a>');
+            var url_prefix = 'http://' + c.server + '/data?'
+                + 'cluster=' + c.cluster
+                + '&nonzero=1&timezone=Asia%2FShanghai&timestop=now';
+            var sap_url = url_prefix + '&timestart=-10min'
+                + '&application=%5CQsap_server_metrics_0.11%5CE'
+                + '&report=state&reportItem=pernode&legend=metric&brief=1'
+                + '&width=750&height=200&multigraph=metric&view=html';
+            gallery.append('<a id="toggle-fullscreen" class="btn btn-large btn-primary" data-toggle="button" href="' + sap_url + '" target="_blank">' + c.name + '</a>');
             c.metrics.forEach(function (metric) {
-                var img_url = url + '&view=png' + '&metric=' + metric;
+                var img_url = url_prefix + '&application=%5CQsap_server_metrics_0.11%5CE'
+                    + '&report=state&reportItem=pernode&legend=metric&brief=1'
+                    + '&multigraph=metric&view=png'
+                    + '&metric=' + metric;
+                var img_link = img_url + '&timestart=-2h&width=750&height=200';
                 var img_src = img_url + '&timestart=-10min&width=150&height=75';
-                var img_id = 'gallery-' + c.cluster + '-' + metric;
+                var img_id = 'gallery-' + c.name + '-' + metric;
                 $('<a data-gallery="gallery"/>')
                     .append($('<img>').prop('src', img_src)
                             .prop('id', img_id))
-                    .prop('href', img_url + '&timestart=-2h&width=750&height=200')
+                    .prop('href', img_link + '&timestart=-2h&width=750&height=200')
                     .prop('title', c.cluster + ':' + metric)
                     .appendTo(gallery);
                 setInterval(function() {
                     $('#'+img_id).attr('src', img_src);
                 }, 60000);
             });
+            var service_url = url_prefix
+                + '&timestart=-10min'
+                + '&application=sp_worker_metrics&report=sp_state&reportItem=pernodeservice'
+                + '&legend=service&brief=5'
+                + '&cluster' + c.cluster
+                + '&metric=query_resp_latency&multigraph=key.service&view=html'
+                + '&width=750&height=200';
+            gallery.append('<a id="toggle-fullscreen" class="btn btn-primary" data-toggle="button" href="' + service_url + '" target="_blank">services</a>');
             gallery.append('<br>');
         });
     });
