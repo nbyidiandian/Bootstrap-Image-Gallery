@@ -42,15 +42,15 @@ $(function () {
         var gallery = $('#gallery');
         var clusters = [
             {
-                cluster: 'sp_.*',
+                cluster: 'sp_s.*',
                 name: 'SP',
                 server: '110.75.28.193:8000',
                 metrics: ['avarage_latency', 'in_qps', 'searcher_res', 'out_err_qps']
             }, 
             {
-                cluster: 'sp501_.*',
-                name: 'SP501',
-                server: '110.75.6.7:9999',
+                cluster: 'sp901_.*',
+                name: 'SP901',
+                server: '115.124.18.70:9999',
                 metrics: ['avarage_latency', 'in_qps', 'searcher_res', 'out_err_qps']
             }, 
             {
@@ -69,7 +69,7 @@ $(function () {
         clusters.forEach(function (c) {
             var url_prefix = 'http://' + c.server + '/data?'
                 + 'cluster=' + c.cluster
-                + '&nonzero=1&timezone=Asia%2FShanghai&timestop=now';
+                + '&timezone=Asia%2FShanghai&timestop=now';
             var sap_url = url_prefix + '&timestart=-10min'
                 + '&application=%5CQsap_server_metrics_0.11%5CE'
                 + '&report=state&reportItem=pernode&legend=metric&brief=1'
@@ -87,7 +87,7 @@ $(function () {
                     .append($('<img>').prop('src', img_src)
                             .prop('id', img_id))
                     .prop('href', img_link + '&timestart=-2h&width=750&height=200')
-                    .prop('title', c.cluster + ':' + metric)
+                    .prop('title', c.name + ':' + metric)
                     .appendTo(gallery);
                 setInterval(function() {
                     $('#'+img_id).attr('src', img_src);
