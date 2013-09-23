@@ -40,6 +40,12 @@ $(function () {
     $(function () {
         // Load images via flickr for demonstration purposes:
         var gallery = $('#gallery');
+        var metrics_details = {
+            'avarage_latency': 'application=sp_worker_metrics&report=sp_state&reportItem=pernodeservice&legend=service&legend=metric&brief=5&metric=query_resp_latency&multigraph=key.service&nonzero=1',
+            'in_qps': '&application=sp_worker_metrics&report=sp_state&reportItem=pernodesrc&legend=src&multigraph=key.src&brief=1&nonzero=1&graph=STACK',
+            'searcher_res': 'application=simond&report=systemstate&reportItem=pernode&metric=cpu_busy%25&metric=mem_user&legend=cluster&legend=metric&legend=node&multigraph=metric&nonzero=1',
+            'out_err_qps': 'application=sp_worker_metrics&report=sp_state&reportItem=pernodeapp&legend=app&brief=5&metric=app_qps&multigraph=key.app&nonzero=1'
+        };
         var clusters = [
             {
                 cluster: 'sp_s.*',
@@ -83,24 +89,20 @@ $(function () {
                 var img_link = img_url + '&timestart=-2h&width=750&height=200';
                 var img_src = img_url + '&timestart=-10min&width=150&height=75';
                 var img_id = 'gallery-' + c.name + '-' + metric;
+                var details_url = url_prefix + '&view=html&'
+                    + metrics_details[metric]
+                    + '&timestart=-10min&width=750&height=200';
                 $('<a data-gallery="gallery"/>')
                     .append($('<img>').prop('src', img_src)
                             .prop('id', img_id))
                     .prop('href', img_link + '&timestart=-2h&width=750&height=200')
                     .prop('title', c.name + ':' + metric)
+                    .data('details', details_url)
                     .appendTo(gallery);
                 setInterval(function() {
                     $('#'+img_id).attr('src', img_src);
                 }, 60000);
             });
-            var service_url = url_prefix
-                + '&timestart=-10min'
-                + '&application=sp_worker_metrics&report=sp_state&reportItem=pernodeservice'
-                + '&legend=service&brief=5'
-                + '&cluster' + c.cluster
-                + '&metric=query_resp_latency&multigraph=key.service&view=html'
-                + '&width=750&height=200';
-            gallery.append('<a id="toggle-fullscreen" class="btn btn-primary" data-toggle="button" href="' + service_url + '" target="_blank">services</a>');
             gallery.append('<br>');
         });
     });
