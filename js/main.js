@@ -84,12 +84,14 @@ $(function () {
             c.metrics.forEach(function (metric) {
                 var img_url = url_prefix + '&application=%5CQsap_server_metrics_0.11%5CE'
                     + '&report=state&reportItem=pernode&legend=metric&brief=1'
-                    + '&multigraph=metric&view=png'
+                    + '&multigraph=metric'
                     + '&metric=' + metric;
-                var img_link = img_url + '&timestart=-2h&width=750&height=200';
-                var img_src = img_url + '&timestart=-10min&width=150&height=75';
+                var img_link = img_url + '&timestart=-2h&width=750&height=200&view=png';
+                var img_src = img_url + '&timestart=-10min&width=150&height=75&view=png';
+                var details_url = img_url + '&timestart=-2h&width=750&height=200&view=html&legend=node&sort=avg';
+                var img_src = img_url + '&timestart=-10min&width=150&height=75&view=png';
                 var img_id = 'gallery-' + c.name + '-' + metric;
-                var details_url = url_prefix + '&view=html&'
+                var related_url = url_prefix + '&view=html&'
                     + metrics_details[metric]
                     + '&timestart=-10min&width=750&height=200';
                 $('<a data-gallery="gallery"/>')
@@ -98,6 +100,7 @@ $(function () {
                     .prop('href', img_link + '&timestart=-2h&width=750&height=200')
                     .prop('title', c.name + ':' + metric)
                     .data('details', details_url)
+                    .data('related', related_url)
                     .appendTo(gallery);
                 setInterval(function() {
                     $('#'+img_id).attr('src', img_src);

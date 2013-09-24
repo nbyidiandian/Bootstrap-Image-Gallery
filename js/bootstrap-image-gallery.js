@@ -86,6 +86,9 @@
         getDetailsUrl: function (element) {
             return $(element).data('details');
         },
+        getRelatedUrl: function (element) {
+            return $(element).data('related');
+        },
         startSlideShow: function () {
             var $this = this;
             if (this.options.slideshow) {
@@ -130,6 +133,7 @@
                 url = this.getUrl(this.$links[index]),
                 download = this.getDownloadUrl(this.$links[index]),
                 details = this.getDetailsUrl(this.$links[index]),
+                related = this.getRelatedUrl(this.$links[index]),
                 oldImg;
             this.abortLoad();
             this.stopSlideShow();
@@ -152,6 +156,10 @@
             modal.find('.modal-details').prop(
                 'href',
                 details || url
+            );
+            modal.find('.modal-related').prop(
+                'href',
+                related || url
             );
             this._loadingImage = loadImage(
                 url,
