@@ -83,13 +83,12 @@ $(function () {
             gallery.append('<a id="toggle-fullscreen" class="btn btn-large btn-primary" data-toggle="button" href="' + sap_url + '" target="_blank">' + c.name + '</a>');
             c.metrics.forEach(function (metric) {
                 var img_url = url_prefix + '&application=%5CQsap_server_metrics_0.11%5CE'
-                    + '&report=state&reportItem=pernode&legend=metric&brief=1'
+                    + '&report=state&reportItem=pernode&legend=metric'
                     + '&multigraph=metric'
                     + '&metric=' + metric;
-                var img_link = img_url + '&timestart=-2h&width=750&height=200&view=png';
-                var img_src = img_url + '&timestart=-10min&width=150&height=75&view=png';
+                var img_link = img_url + '&timestart=-2h&width=750&height=200&view=png&brief=1';
+                var img_src = img_url + '&timestart=-10min&width=150&height=75&view=png&brief=1';
                 var details_url = img_url + '&timestart=-2h&width=750&height=200&view=html&legend=node&sort=avg';
-                var img_src = img_url + '&timestart=-10min&width=150&height=75&view=png';
                 var img_id = 'gallery-' + c.name + '-' + metric;
                 var related_url = url_prefix + '&view=html&'
                     + metrics_details[metric]
