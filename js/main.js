@@ -123,7 +123,7 @@ $(function () {
                 var img_src = url_prefix + metric.thumbnail;
                 var details_url = url_prefix + metric.details;
                 var related_url = url_prefix + metric.related;
-                var img_id = 'gallery-' + c.name + '-' + metric;
+                var img_id = 'gallery-' + c.name + '-' + metric.name;
                 $('<a data-gallery="gallery"/>')
                     .append($('<img>').prop('src', img_src)
                             .prop('id', img_id))
